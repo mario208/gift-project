@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Everything 💌</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fcf6ec;
+            color: #5a4a42;
+            min-height: 100vh;
+            text-align: center;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* --- Mobile-First Base Styles --- */
+        #app-container {
+            width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+            z-index: 10;
+        }
+
+        /* --- Desktop / Tablet Enhancements --- */
+        @media (min-width: 600px) {
+            body {
+                background-color: #eeddcc; /* Darker background outside the app on desktop */
+                display: flex;
+                justify-content: center;
+            }
+            #app-container {
+                max-width: 420px;
+                background-color: #fcf6ec;
+                min-height: 100vh;
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Login Screen --- */
+        #login-screen {
+            margin-top: 15vh;
+            margin-bottom: 50px;
+        }
+        
+        .envelope-icon {
+            font-size: 80px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #a89f91;
+        }
+
+        input {
+            padding: 12px;
+            margin: 15px 0;
+            width: 80%;
+            border-radius: 25px;
+            border: 1px solid #e0d5c1;
+            text-align: center;
+            font-size: 16px;
+            background: #fffbfa;
+        }
+
+        button {
+            padding: 12px 30px;
+            border-radius: 25px;
+            border: none;
+            background-color: #b76e79;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* --- Floating Flowers Transition --- */
+        #transition-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #fcf6ec;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 1.5s ease-in-out;
+            overflow: hidden;
+        }
+
+        .lonely-flower {
+            position: absolute;
+            opacity: 0;
+            user-select: none;
+            /* Prevents text highlighting */
+        }
+
+        /* --- Main Content --- */
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timer-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .time-box {
+            background: #fdf5e6;
+            padding: 10px 5px;
+            border-radius: 10px;
+            min-width: 60px;
+            flex: 1;
+        }
+
+        .time-box span {
+            display: block;
+            font-weight: bold;
+            font-size: 20px;
+            color: #b76e79;
+        }
+
+        .gallery {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+
+        .gallery img {
+            width: 240px;
+            height: 320px;
+            border-radius: 120px 120px 15px 15px; /* Romantic arched window effect */
+            object-fit: cover;
+            border: 8px solid #fff;
+            box-shadow: 0 15px 30px rgba(183, 110, 121, 0.25);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .gallery img:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 40px rgba(183, 110, 121, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app-container">
+
+        <div id="login-screen">
+            <div style="position: relative; display: inline-block; margin-bottom: 10px;">
+                <div class="envelope-icon" style="margin-bottom: 0;">💌</div>
+                <!-- The photo added as a stamp/seal -->
+                <img src="1.jpeg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -20%); width: 35px; height: 35px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.2); object-fit: cover;">
+            </div>
+            <h2>ENTER THE SECRET WORD</h2>
+            <input type="password" id="password" placeholder="• password •">
+            <br>
+            <button onclick="unlockApp()">Unlock 🔓</button>
+            <p id="error-msg" style="color: red; display: none; font-size: 14px;">Incorrect password, try again!</p>
+        </div>
+
+        <div id="transition-screen" class="hidden"></div>
+
+        <div id="main-content" class="hidden">
+            <audio id="bg-music" loop>
+                <source src="your-song-link.mp3" type="audio/mpeg">
+            </audio>
+
+            <div class="card" style="text-align: left; font-size: 14px; line-height: 1.6; color: #5a4a42;">
+                <div style="border-bottom: 1px solid #e0d5c1; padding-bottom: 10px; margin-bottom: 15px;">
+                    <p style="margin: 0; font-weight: bold; color: #b76e79;">Subject: <span style="color: #5a4a42; font-weight: normal;">Annual Appreciation & Birthday Review: Subject "Norgy" 💌📊</span></p>
+                </div>
+                <div id="typewriter-container">
+                    <p style="margin-top: 0;">Dear District Manager,</p>
+                    <p>I don’t even know where to start, but since your birthday is just around the corner and the upcoming days are all about you, I wanted to be the first to send you this "Annual Report"—but one that is completely filled with love and gratitude, so it's the very first thing you see here. ✨</p>
+                    <p>I want to take this opportunity to give you a formal and heartfelt thank you for everything you’ve done and continue to do for me. You are not just incredibly successful and brilliant as a District Manager at such a young age (a milestone I am endlessly proud of); you are truly my role model at work, my big sister, and the ultimate support system that eases every pressure and brightens every difficult path. 🚀💼</p>
+                    <p>I will never forget the great "Decision" you made when you traveled all the way from Alexandria just to surprise me on my birthday and make me happy. That gesture was the absolute highest "Performance" of your loyalty and love, and it carved an even deeper place for you in my heart (even though it’s already completely full of you!). 🥹💖</p>
+                    <p>No matter what I write in this report, words will never be enough to describe how much you mean to me or how deeply I love you. Thank you for managing my life with so much love, care, and continuous support. I am incredibly lucky and blessed that God put you in my path. 🫂✨</p>
+                    <p>May you always be successful, distinguished, and rising to the highest positions that perfectly match your brilliance and pure heart. Wishing you a brand new year full of joy, success, and the achievement of all your upcoming targets and dreams. 🎂🎈</p>
+                    <p style="margin-bottom: 0; margin-top: 25px;">Best Regards,<br><strong>Mira ♥️</strong><br><em style="font-size: 12px; color: #a89f91;">(Head of Loving You Department)</em></p>
+                </div>
+            </div>
+            <div class="card">
+                <h3 style="color: #b76e79; margin: 0;">باقي على عيد ميلادك 🎂</h3>
+                <p style="font-size: 12px; color: #a89f91;">26-06-2026</p>
+                <div class="timer-grid" id="timer"></div>
+            </div>
+
+            <div class="gallery">
+                <img src="2.jpeg" alt="Us">
+                <img src="3.jpeg" alt="Us">
+                <img src="4.jpeg" alt="Us">
+                <img src="5.jpeg" alt="Us">
+                <img src="6.jpeg" alt="Us">
+                <img src="7.jpeg" alt="Us">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function unlockApp() {
+            const pass = document.getElementById('password').value;
+
+            if (pass.toLowerCase() === 'love') {
+                document.getElementById('login-screen').classList.add('hidden');
+
+                const transitionScreen = document.getElementById('transition-screen');
+                transitionScreen.classList.remove('hidden');
+
+                // Generate a massive amount of lonely floating flowers
+                createFlowers(transitionScreen);
+
+                // Play music
+                document.getElementById('bg-music').play().catch(e => console.log("Audio blocked."));
+
+                // Wait 4 seconds, fade out flowers, show main content
+                setTimeout(() => {
+                    transitionScreen.style.opacity = '0';
+
+                    setTimeout(() => {
+                        transitionScreen.classList.add('hidden');
+                        document.getElementById('main-content').classList.remove('hidden');
+                        startTimer();
+                        startTypewriter();
+                    }, 1500); // Wait for fade out to finish
+
+                }, 4000);
+
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // Logic to make HUNDREDS of flowers move randomly and independently
+        function createFlowers(container) {
+            // Added a few more flower/leaf types for depth
+            const flowerTypes = ['🌸', '🌺', '🌼', '🌷', '💮', '🌸', '🏵️', '🌸'];
+
+            // 🔥 INCREASED THIS NUMBER: Change this if you want even more or fewer!
+            const flowerCount = 150;
+
+            for (let i = 0; i < flowerCount; i++) {
+                let flower = document.createElement('div');
+                flower.innerText = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
+                flower.className = 'lonely-flower';
+
+                // Spread them out way past the edges so they drift into/across the screen
+                flower.style.left = (Math.random() * 140 - 20) + 'vw';
+                flower.style.top = (Math.random() * 140 - 20) + 'vh';
+
+                // Huge variety in sizes for a 3D depth effect (some close, some far)
+                flower.style.fontSize = (Math.random() * 45 + 10) + 'px';
+
+                // Random transition speeds so they don't all move at the exact same pace
+                flower.style.transition = `all ${Math.random() * 3 + 2}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+
+                container.appendChild(flower);
+
+                // Trigger the drift shortly after they spawn
+                setTimeout(() => {
+                    // Fade them in slightly randomly so they don't all appear on the exact same millisecond
+                    flower.style.opacity = Math.random() * 0.5 + 0.5;
+
+                    // Huge, sweeping random movements
+                    flower.style.transform = `
+                        translate(${Math.random() * 600 - 300}px, ${Math.random() * 600 - 300}px) 
+                        rotate(${Math.random() * 720 - 360}deg) 
+                        scale(${Math.random() * 2 + 0.5})
+                    `;
+                }, 50);
+            }
+        }
+
+        // Typewriter Logic
+        function startTypewriter() {
+            const container = document.getElementById('typewriter-container');
+            if (!container) return;
+
+            function wrapWords(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const text = node.nodeValue;
+                    if (text.trim() === '') return;
+                    const words = text.split(/(\s+)/);
+                    const fragment = document.createDocumentFragment();
+                    words.forEach(word => {
+                        if (word.trim() === '') {
+                            fragment.appendChild(document.createTextNode(word));
+                        } else {
+                            const span = document.createElement('span');
+                            span.textContent = word;
+                            span.style.opacity = '0';
+                            span.style.transition = 'opacity 0.2s';
+                            span.className = 'typewriter-word';
+                            fragment.appendChild(span);
+                        }
+                    });
+                    node.parentNode.replaceChild(fragment, node);
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.tagName === 'SCRIPT' || node.classList.contains('typewriter-word')) return;
+                    Array.from(node.childNodes).forEach(wrapWords);
+                }
+            }
+
+            wrapWords(container);
+
+            const words = container.querySelectorAll('.typewriter-word');
+            let delay = 0;
+            words.forEach((word) => {
+                setTimeout(() => {
+                    word.style.opacity = '1';
+                }, delay);
+                delay += 80; // 80ms per word
+            });
+        }
+
+        // Timer Logic
+        function startTimer() {
+            const targetDate = new Date(2026, 5, 26).getTime(); // June is month 5 in JS (0-indexed)
+
+            setInterval(() => {
+                const now = new Date().getTime();
+                let distance = targetDate - now;
+                
+                if (distance < 0) distance = 0; // Ensure it stops at 0
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('timer').innerHTML = `
+                    <div class="time-box"><span>${days}</span>يوم</div>
+                    <div class="time-box"><span>${hours}</span>ساعة</div>
+                    <div class="time-box"><span>${minutes}</span>دقيقة</div>
+                    <div class="time-box"><span>${seconds}</span>ثانية</div>
+                `;
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
