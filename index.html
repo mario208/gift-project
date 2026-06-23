@@ -256,7 +256,7 @@
                 <div class="timer-grid" id="timer"></div>
             </div>
 
-            <div class="gallery">
+            <div id="photo-gallery" class="gallery hidden">
                 <img src="2.jpeg" alt="Us">
                 <img src="3.jpeg" alt="Us">
                 <img src="4.jpeg" alt="Us">
@@ -423,8 +423,10 @@
                     if (!hasRevealedMessage) {
                         hasRevealedMessage = true;
                         const emailCard = document.getElementById('email-card');
+                        const photoGallery = document.getElementById('photo-gallery');
                         if (emailCard) {
                             emailCard.classList.remove('hidden');
+                            if (photoGallery) photoGallery.classList.remove('hidden');
                             startTypewriter();
                             createSnow();
                         }
