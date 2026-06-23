@@ -177,6 +177,37 @@
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 25px 40px rgba(183, 110, 121, 0.4);
         }
+
+        /* --- Snow Effect --- */
+        #snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10vh;
+            color: #fff;
+            user-select: none;
+            opacity: 0.8;
+            animation: fall linear infinite;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(120vh) rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -198,13 +229,14 @@
         </div>
 
         <div id="transition-screen" class="hidden"></div>
+        <div id="snow-container"></div>
 
         <div id="main-content" class="hidden">
             <audio id="bg-music" loop>
                 <source src="your-song-link.mp3" type="audio/mpeg">
             </audio>
 
-            <div class="card" style="text-align: left; font-size: 14px; line-height: 1.6; color: #5a4a42;">
+            <div id="email-card" class="card hidden" style="text-align: left; font-size: 14px; line-height: 1.6; color: #5a4a42;">
                 <div style="border-bottom: 1px solid #e0d5c1; padding-bottom: 10px; margin-bottom: 15px;">
                     <p style="margin: 0; font-weight: bold; color: #b76e79;">Subject: <span style="color: #5a4a42; font-weight: normal;">Annual Appreciation & Birthday Review: Subject "Norgy" 💌📊</span></p>
                 </div>
@@ -231,6 +263,8 @@
                 <img src="5.jpeg" alt="Us">
                 <img src="6.jpeg" alt="Us">
                 <img src="7.jpeg" alt="Us">
+                <img src="8.jpeg" alt="Us">
+                <img src="9.jpeg" alt="Us">
             </div>
         </div>
     </div>
@@ -259,7 +293,6 @@
                         transitionScreen.classList.add('hidden');
                         document.getElementById('main-content').classList.remove('hidden');
                         startTimer();
-                        startTypewriter();
                     }, 1500); // Wait for fade out to finish
 
                 }, 4000);
@@ -351,15 +384,52 @@
             });
         }
 
+        // Snow Logic
+        function createSnow() {
+            const snowContainer = document.getElementById('snow-container');
+            if (!snowContainer) return;
+            const snowflakes = ['❄️', '❅', '❆', '🤍', '❄️'];
+            
+            for (let i = 0; i < 60; i++) {
+                let flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerText = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                
+                flake.style.left = Math.random() * 100 + 'vw';
+                
+                const fallDuration = Math.random() * 5 + 5; 
+                flake.style.animationDuration = fallDuration + 's';
+                
+                flake.style.animationDelay = Math.random() * 5 + 's';
+                
+                flake.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                
+                snowContainer.appendChild(flake);
+            }
+        }
+
         // Timer Logic
         function startTimer() {
-            const targetDate = new Date(2026, 5, 26).getTime(); // June is month 5 in JS (0-indexed)
+            const targetDate = new Date(2026, 5, 26).getTime(); // June is month 5 in JS (0-indexed) 
+            let hasRevealedMessage = false;
 
-            setInterval(() => {
+            function updateTimer() {
                 const now = new Date().getTime();
                 let distance = targetDate - now;
                 
-                if (distance < 0) distance = 0; // Ensure it stops at 0
+                if (distance <= 0) {
+                    distance = 0; // Ensure it stops at 0
+                    
+                    if (!hasRevealedMessage) {
+                        hasRevealedMessage = true;
+                        const emailCard = document.getElementById('email-card');
+                        if (emailCard) {
+                            emailCard.classList.remove('hidden');
+                            startTypewriter();
+                            createSnow();
+                        }
+                    }
+                }
 
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -372,7 +442,10 @@
                     <div class="time-box"><span>${minutes}</span>دقيقة</div>
                     <div class="time-box"><span>${seconds}</span>ثانية</div>
                 `;
-            }, 1000);
+            }
+
+            updateTimer(); // Call immediately
+            setInterval(updateTimer, 1000);
         }
     </script>
 </body>
